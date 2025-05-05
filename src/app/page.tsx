@@ -1,15 +1,15 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SearchInput from '../components/common/SearchInput';
 import { formatRupiah } from '@/utils/format-currency';
 
-interface IProducts {
+interface Products {
   id: number;
   name: string;
   price: number;
 }
 
-const products: IProducts[] = [
+const productsData: Products[] = [
   { id: 1, name: 'Laptop', price: 1200 },
   { id: 2, name: 'Smartphone', price: 800 },
   { id: 3, name: 'Tablet', price: 600 },
@@ -22,10 +22,18 @@ const products: IProducts[] = [
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState<Products[]>(productsData);
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const filtered = productsData.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+      setFilteredProducts(filtered);
+    }, 300); // debounce 300ms
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   return (
     <div className="p-8">
